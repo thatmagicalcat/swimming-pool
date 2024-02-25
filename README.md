@@ -8,7 +8,7 @@ $ cargo add swimming-pool
 ```
 
 Example code
-```rs
+```rust
 use std::thread;
 use std::time::Duration;
 
