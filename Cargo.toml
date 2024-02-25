@@ -1,6 +1,6 @@
 [package]
 name = "swimming-pool"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 description = "A simple threadpool for running a number of jobs on a fixed number of threads."
 license = "GPL-3.0-only"
