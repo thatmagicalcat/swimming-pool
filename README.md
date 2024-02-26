@@ -15,7 +15,8 @@ use std::time::Duration;
 use swimming_pool::ThreadPool;
 
 fn main() {
-    let pool = ThreadPool::new(5);
+    // Create a thread pool with 5 worker threads
+    let pool = ThreadPool::<5>::new();
 
     // Spawn 5 jobs
     for _ in 0..5 {
