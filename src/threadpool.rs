@@ -1,7 +1,7 @@
 use std::sync::mpsc;
 use std::sync::{Arc, Mutex};
 
-use super::worker::Worker;
+use crate::worker::Worker;
 
 pub(crate) type Job = Box<dyn FnOnce() + Send + 'static>;
 
@@ -19,8 +19,8 @@ pub(crate) type Job = Box<dyn FnOnce() + Send + 'static>;
 /// use swimming_pool::ThreadPool;
 ///
 /// fn main() {
-///     // Initialize a thread pool with 10 threads
-///     let pool = ThreadPool::<10>::new();
+///     // Initialize a thread pool with 5 threads
+///     let pool = ThreadPool::new(5);
 ///
 ///     pool.execute(|| {
 ///         // Send job to the pool
@@ -30,30 +30,28 @@ pub(crate) type Job = Box<dyn FnOnce() + Send + 'static>;
 ///     pool.join_all();
 /// }
 /// ```
-pub struct ThreadPool<const POOL_SIZE: usize> {
-    workers: [Worker; POOL_SIZE],
+pub struct ThreadPool {
+    workers: Vec<Worker>,
     tx: Option<mpsc::Sender<Job>>,
 }
 
-impl<const POOL_SIZE: usize> ThreadPool<POOL_SIZE> {
+impl ThreadPool {
     /// Initialize a new thread pool
     ///
     /// # Panics
     /// Panics when the generic parameter (POOL_SIZE)
     /// is zero.
-    pub fn new() -> Self {
-        assert!(
-            POOL_SIZE != 0,
-            "Minimum of one thread is required in the pool."
-        );
+    pub fn new(size: usize) -> Self {
+        assert!(size != 0, "Minimum of one thread is required in the pool.");
 
         let (tx, rx) = mpsc::channel();
         let rx = Arc::new(Mutex::new(rx));
 
-        let mut workers = std::array::from_fn(|_| Worker::default());
-        workers
-            .iter_mut()
-            .for_each(|worker| worker.init(Arc::clone(&rx)));
+        let mut workers = Vec::with_capacity(size);
+
+        for _ in 0..size {
+            workers.push(Worker::new(Arc::clone(&rx)));
+        }
 
         Self {
             workers,
@@ -69,7 +67,7 @@ impl<const POOL_SIZE: usize> ThreadPool<POOL_SIZE> {
     /// ```rust
     /// use threadpool::Threadpool;
     ///
-    /// let pool = ThreadPool::<10>::new();
+    /// let pool = ThreadPool::new(10);
     /// pool.execute(|| {
     ///     // Send job to the pool
     /// });
@@ -92,7 +90,7 @@ impl<const POOL_SIZE: usize> ThreadPool<POOL_SIZE> {
     /// Returns the number of worker threads in the
     /// thread pool.
     pub fn get_pool_size(&self) -> usize {
-        POOL_SIZE
+        self.workers.len()
     }
 
     /// Returns the number of woker threads

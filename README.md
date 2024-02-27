@@ -16,7 +16,7 @@ use swimming_pool::ThreadPool;
 
 fn main() {
     // Create a thread pool with 5 worker threads
-    let pool = ThreadPool::<5>::new();
+    let pool = ThreadPool::new(5);
 
     // Spawn 5 jobs
     for _ in 0..5 {
