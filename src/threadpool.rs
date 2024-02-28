@@ -39,8 +39,7 @@ impl ThreadPool {
     /// Initialize a new thread pool
     ///
     /// # Panics
-    /// Panics when the generic parameter (POOL_SIZE)
-    /// is zero.
+    /// Panics when the pool size is zero.
     pub fn new(size: usize) -> Self {
         assert!(size != 0, "Minimum of one thread is required in the pool.");
 
