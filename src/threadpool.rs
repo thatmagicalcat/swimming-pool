@@ -61,7 +61,7 @@ impl ThreadPool {
 
     /// Send a job to the pool.
     /// This job will be picked and executed
-    /// by any free woker thread.
+    /// by any free worker thread.
     ///
     /// # Example
     /// ```rust
@@ -93,7 +93,7 @@ impl ThreadPool {
         self.workers.len()
     }
 
-    /// Returns the number of woker threads
+    /// Returns the number of worker threads
     /// which are currently executing a job.
     pub fn get_working_threads(&self) -> usize {
         self.workers
